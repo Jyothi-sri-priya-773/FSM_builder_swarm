@@ -1,18 +1,20 @@
+# Core LlamaIndex
 llama-index==0.12.44
 llama-index-core==0.12.44
 
-# Optional essential modules that are fully compatible
+# Compatible submodules (based on 0.12.44 dependency graph)
 llama-index-llms-openai==0.3.17
-llama-index-embeddings-openai==0.2.1
+llama-index-embeddings-openai==0.4.4
 llama-index-readers-file==0.4.4
 llama-index-readers-web==0.3.8
+llama-index-cli==0.4.3
 llama-index-workflows==1.0.1
 
-# Core utilities
+# Supporting libraries
 openai==1.14.2
-python-dotenv==1.0.0
-requests==2.31.0
 httpx==0.24.1
+requests==2.31.0
+python-dotenv==1.0.0
 fastapi==0.100.0
 beautifulsoup4>=4.12.3,<5.0.0
 chromadb==0.3.26
