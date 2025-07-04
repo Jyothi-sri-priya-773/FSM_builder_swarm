@@ -1,0 +1,92 @@
+import streamlit as st
+from fsm_agents import user_interaction_agent, planning_agent
+from swarm.core import Swarm
+
+
+def main():
+    st.title("FSM Builder Interface")
+    user_query = st.text_input("Describe the FSM you need:", key="fsm_query_input")
+
+    # Store the last table and last user query in session state for feedback/correction
+    if "last_fsm_query" not in st.session_state:
+        st.session_state.last_fsm_query = ""
+    if "last_fsm_table" not in st.session_state:
+        st.session_state.last_fsm_table = ""
+    if "fsm_feedback" not in st.session_state:
+        st.session_state.fsm_feedback = ""
+    if "fsm_confirmed" not in st.session_state:
+        st.session_state.fsm_confirmed = False
+
+    if st.button("Generate Steps"):
+        swarm = Swarm()
+        result = swarm.run(agent=user_interaction_agent, messages=[{"role": "user", "content": user_query}])
+        last_msg = result.messages[-1] if hasattr(result, "messages") and result.messages else None
+        if last_msg and last_msg.get("role") == "assistant" and last_msg.get("content"):
+            st.markdown(last_msg["content"], unsafe_allow_html=True)
+            st.session_state.last_fsm_query = user_query
+            st.session_state.last_fsm_table = last_msg["content"]
+            st.session_state.fsm_confirmed = False
+        else:
+            st.write("No result generated.")
+
+    # Feedback/correction/confirmation section
+    if st.session_state.last_fsm_table and not st.session_state.fsm_confirmed:
+        st.markdown(
+            "#### Review the generated FSM steps above. "
+            "Type 'confirm', 'ok', or any positive response to finalize, or provide corrections to update the steps."
+        )
+        feedback = st.text_area("Your feedback (type 'confirm' or 'ok' to finalize, or enter corrections):", key="fsm_feedback_input")
+        if st.button("Submit Feedback"):
+            positive_responses = ["confirm", "ok", "yes", "looks good", "fine", "approved", "done", "accept"]
+            if "chat_history" not in st.session_state:
+                st.session_state.chat_history = []
+            st.session_state.chat_history.append({"role": "user", "content": feedback})
+            if feedback.strip().lower() in positive_responses:
+                st.session_state.fsm_confirmed = True
+                st.success("FSM steps confirmed and finalized.")
+                st.session_state.chat_history.append({"role": "assistant", "sender": "main_agent", "content": "FSM steps confirmed and finalized."})
+            elif feedback.strip():
+                # Always pass both the last table and the user feedback to the planning agent for correction
+                correction_prompt = (
+                    f"Original FSM Query: {st.session_state.last_fsm_query}\n\n"
+                    f"Previous FSM Steps Table:\n{st.session_state.last_fsm_table}\n\n"
+                    f"User Feedback/Correction: {feedback}\n\n"
+                    "Please update the FSM steps table above according to the user's feedback/correction. "
+                    "Return only the corrected Markdown table. "
+                    "If any state type is not valid, replace it with a valid FSM state type from your examples."
+                )
+                swarm = Swarm()
+                result = swarm.run(agent=planning_agent, messages=[{"role": "user", "content": correction_prompt}])
+                last_msg = result.messages[-1] if hasattr(result, "messages") and result.messages else None
+                if last_msg and last_msg.get("role") == "assistant" and last_msg.get("content"):
+                    st.markdown(last_msg["content"], unsafe_allow_html=True)
+                    st.session_state.last_fsm_table = last_msg["content"]
+                    st.session_state.fsm_confirmed = False
+                    st.session_state.chat_history.append({"role": "assistant", "sender": "main_agent", "content": last_msg["content"]})
+                else:
+                    st.write("No result generated.")
+
+    if st.session_state.fsm_confirmed:
+        st.success("FSM steps have been confirmed and finalized.")
+
+    # --- Optional: Show chat history in a chat-like panel ---
+    if "chat_history" in st.session_state and st.session_state.chat_history:
+        st.markdown("#### Conversation History")
+        for idx, msg in enumerate(st.session_state.chat_history):
+            if msg["role"] == "user":
+                st.markdown(
+                    f'<div class="chat-row user-row"><span class="chat-icon">👤</span>'
+                    f'<div class="chat-message user-message">{msg["content"]}</div></div>',
+                    unsafe_allow_html=True
+                )
+            elif msg.get("role") == "assistant":
+                st.markdown(
+                    f'<div class="chat-row assistant-row"><span class="chat-icon">🤖</span>'
+                    f'<div class="chat-message assistant-message" style="text-align:left;">{msg["content"]}</div></div>',
+                    unsafe_allow_html=True
+                )
+
+
+if __name__ == "__main__":
+    main()
+
