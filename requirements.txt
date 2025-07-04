@@ -21,11 +21,11 @@ llama-index-workflows==1.0.1
 
 # Supporting libraries
 requests==2.31.0
-beautifulsoup4==4.12.2
+beautifulsoup4>=4.12.3,<5.0.0
 python-dotenv==1.0.0
 chromadb==0.3.26
 httpx==0.24.1
 fastapi==0.100.0
 
-# Use compatible OpenAI version for llama-index-agent-openai
+# Compatible OpenAI version
 openai>=1.14.0
