@@ -1,8 +1,8 @@
-# Llama Index and related modules (latest compatible versions)
-llama-index==0.12.24
+# Compatible LlamaIndex core (0.13.10) and matching plugins
+llama-index==0.13.10
+llama-index-core==0.13.10
 llama-index-agent-openai==0.4.3
 llama-index-cli==0.4.1
-llama-index-core==0.12.44
 llama-index-embeddings-azure-openai==0.2.5
 llama-index-embeddings-huggingface==0.5.2
 llama-index-embeddings-openai==0.3.1
@@ -27,5 +27,5 @@ chromadb==0.3.26
 httpx==0.24.1
 fastapi==0.100.0
 
-# Compatible OpenAI version
+# OpenAI (required by many LlamaIndex modules)
 openai>=1.14.0
