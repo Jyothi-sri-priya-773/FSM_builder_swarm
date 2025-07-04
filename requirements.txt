@@ -1,31 +1,18 @@
-# Compatible LlamaIndex core (0.13.10) and matching plugins
-llama-index==0.13.10
-llama-index-core==0.13.10
-llama-index-agent-openai==0.4.3
-llama-index-cli==0.4.1
-llama-index-embeddings-azure-openai==0.2.5
-llama-index-embeddings-huggingface==0.5.2
-llama-index-embeddings-openai==0.3.1
-llama-index-indices-managed-llama-cloud==0.6.4
-llama-index-instrumentation==0.2.0
-llama-index-llms-azure-openai==0.2.1
-llama-index-llms-openai==0.3.20
-llama-index-multi-modal-llms-openai==0.4.3
-llama-index-program-openai==0.3.1
-llama-index-question-gen-openai==0.3.0
-llama-index-readers-file==0.4.4
-llama-index-readers-llama-parse==0.4.0
-llama-index-readers-web==0.3.8
-llama-index-vector-stores-chroma==0.4.1
-llama-index-workflows==1.0.1
+llama-index==0.12.44
+llama-index-core==0.12.44
+llama-index-agent-openai==0.3.4  # downgraded
+llama-index-llms-openai==0.3.17  # downgraded
+llama-index-embeddings-openai==0.2.1  # downgraded
+llama-index-program-openai==0.2.2  # downgraded
+llama-index-readers-file==0.3.4  # downgraded
+llama-index-readers-web==0.3.6
+llama-index-workflows==0.1.7
 
-# Supporting libraries
-requests==2.31.0
-beautifulsoup4>=4.12.3,<5.0.0
+# other libs
+openai==1.14.2
 python-dotenv==1.0.0
-chromadb==0.3.26
+beautifulsoup4>=4.12.3,<5.0.0
+requests==2.31.0
 httpx==0.24.1
 fastapi==0.100.0
-
-# OpenAI (required by many LlamaIndex modules)
-openai>=1.14.0
+chromadb==0.3.26
